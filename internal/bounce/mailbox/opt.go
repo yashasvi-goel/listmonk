@@ -7,9 +7,6 @@ type Opt struct {
 	// Host is the server's hostname.
 	Host string `json:"host"`
 
-	// Port is the server port.
-	Port int `json:"port"`
-
 	AuthProtocol string `json:"auth_protocol"`
 
 	// Username is the mail server login username.
@@ -21,9 +18,12 @@ type Opt struct {
 	// Folder is the name of the IMAP folder to scan for e-mails.
 	Folder string `json:"folder"`
 
+	// Port is the server port.
+	Port int `json:"port"`
+
+	ScanInterval time.Duration `json:"scan_interval"`
+
 	// Optional TLS settings.
 	TLSEnabled    bool `json:"tls_enabled"`
 	TLSSkipVerify bool `json:"tls_skip_verify"`
-
-	ScanInterval time.Duration `json:"scan_interval"`
 }

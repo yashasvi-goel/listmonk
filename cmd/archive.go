@@ -110,9 +110,9 @@ func handleCampaignArchivesPage(c echo.Context) error {
 	return c.Render(http.StatusOK, "archive", struct {
 		Title       string
 		Description string
+		Pagination  template.HTML
 		Campaigns   []campArchive
 		TotalPages  int
-		Pagination  template.HTML
 	}{title, title, out, pg.TotalPages, template.HTML(pg.HTML("?page=%d"))})
 }
 

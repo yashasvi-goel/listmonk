@@ -15,13 +15,13 @@ import (
 
 // POP represents a POP mailbox.
 type POP struct {
-	opt    Opt
 	client *pop3.Client
+	opt    Opt
 }
 
 type bounceHeaders struct {
-	Header string
 	Regexp *regexp.Regexp
+	Header string
 }
 
 var (

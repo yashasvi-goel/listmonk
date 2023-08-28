@@ -36,35 +36,35 @@ const (
 // App contains the "global" components that are
 // passed around, especially through HTTP handlers.
 type App struct {
-	core       *core.Core
 	fs         stuffbin.FileSystem
+	media      media.Store
+	core       *core.Core
 	db         *sqlx.DB
 	queries    *models.Queries
 	constants  *constants
 	manager    *manager.Manager
 	importer   *subimporter.Importer
 	messengers map[string]manager.Messenger
-	media      media.Store
 	i18n       *i18n.I18n
 	bounce     *bounce.Manager
 	paginator  *paginator.Paginator
 	captcha    *captcha.Captcha
 	events     *events.Events
 	notifTpls  *notifTpls
-	about      about
 	log        *log.Logger
 	bufLog     *buflog.BufLog
 
 	// Channel for passing reload signals.
 	chReload chan os.Signal
 
+	// Global state that stores data on an available remote update.
+	update *AppUpdate
+	about  about
+	sync.Mutex
+
 	// Global variable that stores the state indicating that a restart is required
 	// after a settings update.
 	needsRestart bool
-
-	// Global state that stores data on an available remote update.
-	update *AppUpdate
-	sync.Mutex
 }
 
 var (

@@ -60,9 +60,9 @@ type Options struct {
 
 // Postback represents an HTTP Message server.
 type Postback struct {
+	c       *http.Client
 	authStr string
 	o       Options
-	c       *http.Client
 }
 
 // New returns a new instance of the HTTP Postback messenger.

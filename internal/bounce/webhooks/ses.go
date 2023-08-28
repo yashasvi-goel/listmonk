@@ -56,9 +56,9 @@ type sesMail struct {
 	} `json:"bounce"`
 	Mail struct {
 		Timestamp        sesTimestamp        `json:"timestamp"`
-		HeadersTruncated bool                `json:"headersTruncated"`
 		Destination      []string            `json:"destination"`
 		Headers          []map[string]string `json:"headers"`
+		HeadersTruncated bool                `json:"headersTruncated"`
 	} `json:"mail"`
 }
 

@@ -96,40 +96,42 @@ type Manager struct {
 // CampaignMessage represents an instance of campaign message to be pushed out,
 // specific to a subscriber, via the campaign's messenger.
 type CampaignMessage struct {
-	Campaign   *models.Campaign
+	Campaign *models.Campaign
+
+	from       string
+	to         string
+	subject    string
+	unsubURL   string
 	Subscriber models.Subscriber
 
-	from     string
-	to       string
-	subject  string
-	body     []byte
-	altBody  []byte
-	unsubURL string
+	body    []byte
+	altBody []byte
 }
 
 // Config has parameters for configuring the manager.
 type Config struct {
+	FromEmail    string
+	LinkTrackURL string
+	UnsubURL     string
+	OptinURL     string
+	MessageURL   string
+	ViewTrackURL string
+	ArchiveURL   string
 	// Number of subscribers to pull from the DB in a single iteration.
 	BatchSize             int
 	Concurrency           int
 	MessageRate           int
 	MaxSendErrors         int
-	SlidingWindow         bool
 	SlidingWindowDuration time.Duration
 	SlidingWindowRate     int
-	RequeueOnError        bool
-	FromEmail             string
-	IndividualTracking    bool
-	LinkTrackURL          string
-	UnsubURL              string
-	OptinURL              string
-	MessageURL            string
-	ViewTrackURL          string
-	ArchiveURL            string
-	UnsubHeader           bool
 
 	// Interval to scan the DB for active campaign checkpoints.
 	ScanInterval time.Duration
+
+	SlidingWindow      bool
+	RequeueOnError     bool
+	IndividualTracking bool
+	UnsubHeader        bool
 
 	// ScanCampaigns indicates whether this instance of manager will scan the DB
 	// for active campaigns and process them.

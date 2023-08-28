@@ -34,13 +34,13 @@ type aboutSystem struct {
 	OSMB    uint64 `json:"memory_from_os_mb"`
 }
 type about struct {
+	Host      aboutHost      `json:"host"`
 	Version   string         `json:"version"`
 	Build     string         `json:"build"`
 	GoVersion string         `json:"go_version"`
 	GoArch    string         `json:"go_arch"`
 	Database  types.JSONText `json:"database"`
 	System    aboutSystem    `json:"system"`
-	Host      aboutHost      `json:"host"`
 }
 
 var (

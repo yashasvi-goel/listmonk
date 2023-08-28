@@ -26,15 +26,15 @@ type Mailbox interface {
 
 // Opt represents bounce processing options.
 type Opt struct {
-	MailboxEnabled  bool        `json:"mailbox_enabled"`
-	MailboxType     string      `json:"mailbox_type"`
+	RecordBounceCB func(models.Bounce) error
+	MailboxType    string `json:"mailbox_type"`
+	SendgridKey    string `json:"sendgrid_key"`
+
 	Mailbox         mailbox.Opt `json:"mailbox"`
+	MailboxEnabled  bool        `json:"mailbox_enabled"`
 	WebhooksEnabled bool        `json:"webhooks_enabled"`
 	SESEnabled      bool        `json:"ses_enabled"`
 	SendgridEnabled bool        `json:"sendgrid_enabled"`
-	SendgridKey     string      `json:"sendgrid_key"`
-
-	RecordBounceCB func(models.Bounce) error
 }
 
 // Manager handles e-mail bounces.

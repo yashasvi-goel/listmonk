@@ -37,14 +37,14 @@ type tplRenderer struct {
 // tplData is the data container that is injected
 // into public templates for accessing data.
 type tplData struct {
+	Data                interface{}
+	L                   *i18n.I18n
 	SiteName            string
 	RootURL             string
 	LogoURL             string
 	FaviconURL          string
 	EnablePublicSubPage bool
 	EnablePublicArchive bool
-	Data                interface{}
-	L                   *i18n.I18n
 }
 
 type publicTpl struct {
@@ -54,9 +54,9 @@ type publicTpl struct {
 
 type unsubTpl struct {
 	publicTpl
+	SubUUID          string
 	Subscriber       models.Subscriber
 	Subscriptions    []models.Subscription
-	SubUUID          string
 	AllowBlocklist   bool
 	AllowExport      bool
 	AllowWipe        bool
@@ -79,8 +79,8 @@ type msgTpl struct {
 
 type subFormTpl struct {
 	publicTpl
-	Lists      []models.List
 	CaptchaKey string
+	Lists      []models.List
 }
 
 var (

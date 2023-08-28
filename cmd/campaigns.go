@@ -23,9 +23,6 @@ import (
 type campaignReq struct {
 	models.Campaign
 
-	// Indicates if the "send_at" date should be written or set to null.
-	SendLater bool `json:"send_later"`
-
 	// This overrides Campaign.Lists to receive and
 	// write a list of int IDs during creation and updation.
 	// Campaign.Lists is JSONText for sending lists children
@@ -36,14 +33,17 @@ type campaignReq struct {
 
 	// This is only relevant to campaign test requests.
 	SubscriberEmails pq.StringArray `json:"subscribers"`
+
+	// Indicates if the "send_at" date should be written or set to null.
+	SendLater bool `json:"send_later"`
 }
 
 // campaignContentReq wraps params coming from API requests for converting
 // campaign content formats.
 type campaignContentReq struct {
-	models.Campaign
 	From string `json:"from"`
 	To   string `json:"to"`
+	models.Campaign
 }
 
 var (
@@ -309,9 +309,9 @@ func handleUpdateCampaignArchive(c echo.Context) error {
 	)
 
 	req := struct {
-		Archive    bool        `json:"archive"`
-		TemplateID int         `json:"archive_template_id"`
 		Meta       models.JSON `json:"archive_meta"`
+		TemplateID int         `json:"archive_template_id"`
+		Archive    bool        `json:"archive"`
 	}{}
 
 	// Get and validate fields.
@@ -605,9 +605,9 @@ func makeOptinCampaignMessage(o campaignReq, app *App) (campaignReq, error) {
 	// Prepare sample opt-in message for the campaign.
 	var b bytes.Buffer
 	if err := app.notifTpls.tpls.ExecuteTemplate(&b, "optin-campaign", struct {
-		Lists        []models.List
 		OptinURLAttr template.HTMLAttr
-	}{lists, optinURLAttr}); err != nil {
+		Lists        []models.List
+	}{optinURLAttr, lists}); err != nil {
 		app.log.Printf("error compiling 'optin-campaign' template: %v", err)
 		return o, echo.NewHTTPError(http.StatusBadRequest,
 			app.i18n.Ts("templates.errorCompiling", "error", err.Error()))

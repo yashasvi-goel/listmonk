@@ -15,15 +15,15 @@ const (
 )
 
 type captchaResp struct {
-	Success    bool     `json:"success"`
 	ErrorCodes []string `json:"error_codes"`
+	Success    bool     `json:"success"`
 }
 
 // Captcha is a simple Captcha client.
 // It currently implements hcaptcha.com
 type Captcha struct {
-	o      Opt
 	client *http.Client
+	o      Opt
 }
 
 type Opt struct {

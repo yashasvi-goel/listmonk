@@ -12,9 +12,9 @@ import (
 
 // I18n offers translation functions over a language map.
 type I18n struct {
+	langMap map[string]string
 	code    string `json:"code"`
 	name    string `json:"name"`
-	langMap map[string]string
 }
 
 var reParam = regexp.MustCompile(`(?i)\{([a-z0-9-.]+)\}`)

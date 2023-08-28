@@ -18,18 +18,19 @@ const (
 
 // Server represents an SMTP server's credentials.
 type Server struct {
-	Username      string            `json:"username"`
-	Password      string            `json:"password"`
-	AuthProtocol  string            `json:"auth_protocol"`
-	TLSType       string            `json:"tls_type"`
-	TLSSkipVerify bool              `json:"tls_skip_verify"`
-	EmailHeaders  map[string]string `json:"email_headers"`
 
 	// Rest of the options are embedded directly from the smtppool lib.
 	// The JSON tag is for config unmarshal to work.
 	smtppool.Opt `json:",squash"`
 
-	pool *smtppool.Pool
+	EmailHeaders map[string]string `json:"email_headers"`
+
+	pool          *smtppool.Pool
+	Username      string `json:"username"`
+	Password      string `json:"password"`
+	AuthProtocol  string `json:"auth_protocol"`
+	TLSType       string `json:"tls_type"`
+	TLSSkipVerify bool   `json:"tls_skip_verify"`
 }
 
 // Emailer is the SMTP e-mail messenger.

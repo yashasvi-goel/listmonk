@@ -51,15 +51,15 @@ const (
 
 // Importer represents the bulk CSV subscriber import system.
 type Importer struct {
-	opt                   Options
-	db                    *sql.DB
-	i18n                  *i18n.I18n
-	domainBlocklist       map[string]bool
-	hasBlocklistWildcards bool
+	status          Status
+	db              *sql.DB
+	i18n            *i18n.I18n
+	domainBlocklist map[string]bool
 
-	stop   chan bool
-	status Status
+	stop chan bool
+	opt  Options
 	sync.RWMutex
+	hasBlocklistWildcards bool
 }
 
 // Options represents import options.
@@ -87,18 +87,18 @@ type SessionOpt struct {
 	Filename  string `json:"filename"`
 	Mode      string `json:"mode"`
 	SubStatus string `json:"subscription_status"`
-	Overwrite bool   `json:"overwrite"`
 	Delim     string `json:"delim"`
 	ListIDs   []int  `json:"lists"`
+	Overwrite bool   `json:"overwrite"`
 }
 
 // Status represents statistics from an ongoing import session.
 type Status struct {
+	logBuf   *bytes.Buffer
 	Name     string `json:"name"`
+	Status   string `json:"status"`
 	Total    int    `json:"total"`
 	Imported int    `json:"imported"`
-	Status   string `json:"status"`
-	logBuf   *bytes.Buffer
 }
 
 // SubReq is a wrapper over the Subscriber model.

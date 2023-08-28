@@ -51,42 +51,17 @@ const (
 
 // constants contains static, constant config values required by the app.
 type constants struct {
-	SiteName                      string   `koanf:"site_name"`
-	RootURL                       string   `koanf:"root_url"`
-	LogoURL                       string   `koanf:"logo_url"`
-	FaviconURL                    string   `koanf:"favicon_url"`
-	FromEmail                     string   `koanf:"from_email"`
-	NotifyEmails                  []string `koanf:"notify_emails"`
-	EnablePublicSubPage           bool     `koanf:"enable_public_subscription_page"`
-	EnablePublicArchive           bool     `koanf:"enable_public_archive"`
-	EnablePublicArchiveRSSContent bool     `koanf:"enable_public_archive_rss_content"`
-	SendOptinConfirmation         bool     `koanf:"send_optin_confirmation"`
-	Lang                          string   `koanf:"lang"`
-	DBBatchSize                   int      `koanf:"batch_size"`
-	Privacy                       struct {
-		IndividualTracking bool            `koanf:"individual_tracking"`
-		AllowPreferences   bool            `koanf:"allow_preferences"`
-		AllowBlocklist     bool            `koanf:"allow_blocklist"`
-		AllowExport        bool            `koanf:"allow_export"`
-		AllowWipe          bool            `koanf:"allow_wipe"`
-		RecordOptinIP      bool            `koanf:"record_optin_ip"`
-		Exportable         map[string]bool `koanf:"-"`
-		DomainBlocklist    []string        `koanf:"-"`
-	} `koanf:"privacy"`
 	Security struct {
-		EnableCaptcha bool   `koanf:"enable_captcha"`
 		CaptchaKey    string `koanf:"captcha_key"`
 		CaptchaSecret string `koanf:"captcha_secret"`
+		EnableCaptcha bool   `koanf:"enable_captcha"`
 	} `koanf:"security"`
-	AdminUsername []byte `koanf:"admin_username"`
-	AdminPassword []byte `koanf:"admin_password"`
-
-	Appearance struct {
-		AdminCSS  []byte `koanf:"admin.custom_css"`
-		AdminJS   []byte `koanf:"admin.custom_js"`
-		PublicCSS []byte `koanf:"public.custom_css"`
-		PublicJS  []byte `koanf:"public.custom_js"`
-	}
+	SiteName   string `koanf:"site_name"`
+	RootURL    string `koanf:"root_url"`
+	LogoURL    string `koanf:"logo_url"`
+	FaviconURL string `koanf:"favicon_url"`
+	FromEmail  string `koanf:"from_email"`
+	Lang       string `koanf:"lang"`
 
 	UnsubURL     string
 	LinkTrackURL string
@@ -95,10 +70,38 @@ type constants struct {
 	MessageURL   string
 	ArchiveURL   string
 
+	Appearance struct {
+		AdminCSS  []byte `koanf:"admin.custom_css"`
+		AdminJS   []byte `koanf:"admin.custom_js"`
+		PublicCSS []byte `koanf:"public.custom_css"`
+		PublicJS  []byte `koanf:"public.custom_js"`
+	}
+
+	Privacy struct {
+		Exportable         map[string]bool `koanf:"-"`
+		DomainBlocklist    []string        `koanf:"-"`
+		IndividualTracking bool            `koanf:"individual_tracking"`
+		AllowPreferences   bool            `koanf:"allow_preferences"`
+		AllowBlocklist     bool            `koanf:"allow_blocklist"`
+		AllowExport        bool            `koanf:"allow_export"`
+		AllowWipe          bool            `koanf:"allow_wipe"`
+		RecordOptinIP      bool            `koanf:"record_optin_ip"`
+	} `koanf:"privacy"`
+
 	MediaUpload struct {
 		Provider   string
 		Extensions []string
 	}
+
+	NotifyEmails  []string `koanf:"notify_emails"`
+	AdminUsername []byte   `koanf:"admin_username"`
+	AdminPassword []byte   `koanf:"admin_password"`
+
+	DBBatchSize                   int  `koanf:"batch_size"`
+	EnablePublicSubPage           bool `koanf:"enable_public_subscription_page"`
+	EnablePublicArchive           bool `koanf:"enable_public_archive"`
+	EnablePublicArchiveRSSContent bool `koanf:"enable_public_archive_rss_content"`
+	SendOptinConfirmation         bool `koanf:"send_optin_confirmation"`
 
 	BounceWebhooksEnabled bool
 	BounceSESEnabled      bool
@@ -256,12 +259,12 @@ func initFS(appDir, frontendDir, staticDir, i18nDir string) stuffbin.FileSystem 
 func initDB() *sqlx.DB {
 	var c struct {
 		Host        string        `koanf:"host"`
-		Port        int           `koanf:"port"`
 		User        string        `koanf:"user"`
 		Password    string        `koanf:"password"`
 		DBName      string        `koanf:"database"`
 		SSLMode     string        `koanf:"ssl_mode"`
 		Params      string        `koanf:"params"`
+		Port        int           `koanf:"port"`
 		MaxOpen     int           `koanf:"max_open"`
 		MaxIdle     int           `koanf:"max_idle"`
 		MaxLifetime time.Duration `koanf:"max_lifetime"`

@@ -11,12 +11,12 @@ import (
 )
 
 type serverConfig struct {
+	Update       *AppUpdate `json:"update"`
+	Lang         string     `json:"lang"`
+	Version      string     `json:"version"`
 	Messengers   []string   `json:"messengers"`
 	Langs        []i18nLang `json:"langs"`
-	Lang         string     `json:"lang"`
-	Update       *AppUpdate `json:"update"`
 	NeedsRestart bool       `json:"needs_restart"`
-	Version      string     `json:"version"`
 }
 
 // handleGetServerConfig returns general server config.

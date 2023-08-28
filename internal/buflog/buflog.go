@@ -9,9 +9,10 @@ import (
 // BufLog implements a simple log buffer that can be supplied to a std
 // log instance. It stores logs up to N lines.
 type BufLog struct {
+	buf   *bytes.Buffer
+	lines []string
+
 	maxLines int
-	buf      *bytes.Buffer
-	lines    []string
 
 	sync.RWMutex
 }

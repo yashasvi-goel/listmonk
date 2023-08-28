@@ -22,11 +22,11 @@ const (
 // subscriber related requests.
 type subQueryReq struct {
 	Query         string `json:"query"`
+	Action        string `json:"action"`
+	Status        string `json:"status"`
 	ListIDs       []int  `json:"list_ids"`
 	TargetListIDs []int  `json:"target_list_ids"`
 	SubscriberIDs []int  `json:"ids"`
-	Action        string `json:"action"`
-	Status        string `json:"status"`
 }
 
 // subProfileData represents a subscriber's collated data in JSON

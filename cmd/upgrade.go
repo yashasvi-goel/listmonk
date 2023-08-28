@@ -17,8 +17,8 @@ import (
 // takes the filesystem and config objects in case there are additional bits
 // of logic to be performed before executing upgrades. fn is idempotent.
 type migFunc struct {
-	version string
 	fn      func(*sqlx.DB, stuffbin.FileSystem, *koanf.Koanf) error
+	version string
 }
 
 // migList is the list of available migList ordered by the semver.

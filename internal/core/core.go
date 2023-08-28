@@ -35,11 +35,11 @@ type Core struct {
 
 // Constants represents constant config.
 type Constants struct {
-	SendOptinConfirmation bool
-	BounceActions         map[string]struct {
-		Count  int
+	BounceActions map[string]struct {
 		Action string
+		Count  int
 	}
+	SendOptinConfirmation bool
 }
 
 // Hooks contains external function hooks that are required by the core package.

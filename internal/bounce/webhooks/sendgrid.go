@@ -18,13 +18,14 @@ import (
 
 type sendgridNotif struct {
 	Email                string `json:"email"`
-	Timestamp            int64  `json:"timestamp"`
 	Event                string `json:"event"`
 	BounceClassification string `json:"bounce_classification"`
 
 	// SendGrid flattens all X-headers and adds them to the bounce
 	// event notification.
 	CampaignUUID string `json:"XListmonkCampaign"`
+
+	Timestamp int64 `json:"timestamp"`
 }
 
 // Sendgrid handles Sendgrid/SNS webhook notifications including confirming SNS topic subscription

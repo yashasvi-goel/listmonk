@@ -139,9 +139,9 @@ type PageResults struct {
 
 // Base holds common fields shared across models.
 type Base struct {
-	ID        int       `db:"id" json:"id"`
 	CreatedAt null.Time `db:"created_at" json:"created_at"`
 	UpdatedAt null.Time `db:"updated_at" json:"updated_at"`
+	ID        int       `db:"id" json:"id"`
 }
 
 // User represents an admin user.
@@ -167,8 +167,8 @@ type Subscriber struct {
 	Lists   types.JSONText `db:"lists" json:"lists"`
 }
 type subLists struct {
-	SubscriberID int            `db:"subscriber_id"`
 	Lists        types.JSONText `db:"lists"`
+	SubscriberID int            `db:"subscriber_id"`
 }
 
 // Subscription represents a list attached to a subscriber.
@@ -210,22 +210,23 @@ type SubscriberExport struct {
 
 // List represents a mailing list.
 type List struct {
+	SubscriberCounts StringIntMap `db:"subscriber_statuses" json:"subscriber_statuses"`
 	Base
 
-	UUID             string         `db:"uuid" json:"uuid"`
-	Name             string         `db:"name" json:"name"`
-	Type             string         `db:"type" json:"type"`
-	Optin            string         `db:"optin" json:"optin"`
-	Tags             pq.StringArray `db:"tags" json:"tags"`
-	Description      string         `db:"description" json:"description"`
-	SubscriberCount  int            `db:"-" json:"subscriber_count"`
-	SubscriberCounts StringIntMap   `db:"subscriber_statuses" json:"subscriber_statuses"`
-	SubscriberID     int            `db:"subscriber_id" json:"-"`
-
-	// This is only relevant when querying the lists of a subscriber.
-	SubscriptionStatus    string    `db:"subscription_status" json:"subscription_status,omitempty"`
 	SubscriptionCreatedAt null.Time `db:"subscription_created_at" json:"subscription_created_at,omitempty"`
 	SubscriptionUpdatedAt null.Time `db:"subscription_updated_at" json:"subscription_updated_at,omitempty"`
+
+	UUID        string `db:"uuid" json:"uuid"`
+	Name        string `db:"name" json:"name"`
+	Type        string `db:"type" json:"type"`
+	Optin       string `db:"optin" json:"optin"`
+	Description string `db:"description" json:"description"`
+
+	// This is only relevant when querying the lists of a subscriber.
+	SubscriptionStatus string         `db:"subscription_status" json:"subscription_status,omitempty"`
+	Tags               pq.StringArray `db:"tags" json:"tags"`
+	SubscriberCount    int            `db:"-" json:"subscriber_count"`
+	SubscriberID       int            `db:"subscriber_id" json:"-"`
 
 	// Pseudofield for getting the total number of subscribers
 	// in searches and queries.
@@ -234,33 +235,30 @@ type List struct {
 
 // Campaign represents an e-mail campaign.
 type Campaign struct {
-	Base
-	CampaignMeta
+	Tpl        *template.Template `json:"-"`
+	SubjectTpl *txttpl.Template   `json:"-"`
+	AltBodyTpl *template.Template `json:"-"`
 
-	UUID              string          `db:"uuid" json:"uuid"`
-	Type              string          `db:"type" json:"type"`
-	Name              string          `db:"name" json:"name"`
-	Subject           string          `db:"subject" json:"subject"`
-	FromEmail         string          `db:"from_email" json:"from_email"`
-	Body              string          `db:"body" json:"body"`
-	AltBody           null.String     `db:"altbody" json:"altbody"`
-	SendAt            null.Time       `db:"send_at" json:"send_at"`
-	Status            string          `db:"status" json:"status"`
-	ContentType       string          `db:"content_type" json:"content_type"`
-	Tags              pq.StringArray  `db:"tags" json:"tags"`
-	Headers           Headers         `db:"headers" json:"headers"`
-	TemplateID        int             `db:"template_id" json:"template_id"`
-	Messenger         string          `db:"messenger" json:"messenger"`
-	Archive           bool            `db:"archive" json:"archive"`
-	ArchiveTemplateID int             `db:"archive_template_id" json:"archive_template_id"`
-	ArchiveMeta       json.RawMessage `db:"archive_meta" json:"archive_meta"`
+	Base
+	SendAt null.Time `db:"send_at" json:"send_at"`
+
+	UUID        string `db:"uuid" json:"uuid"`
+	Type        string `db:"type" json:"type"`
+	Name        string `db:"name" json:"name"`
+	Subject     string `db:"subject" json:"subject"`
+	FromEmail   string `db:"from_email" json:"from_email"`
+	Body        string `db:"body" json:"body"`
+	Status      string `db:"status" json:"status"`
+	ContentType string `db:"content_type" json:"content_type"`
+	Messenger   string `db:"messenger" json:"messenger"`
 
 	// TemplateBody is joined in from templates by the next-campaigns query.
-	TemplateBody        string             `db:"template_body" json:"-"`
-	ArchiveTemplateBody string             `db:"archive_template_body" json:"-"`
-	Tpl                 *template.Template `json:"-"`
-	SubjectTpl          *txttpl.Template   `json:"-"`
-	AltBodyTpl          *template.Template `json:"-"`
+	TemplateBody        string          `db:"template_body" json:"-"`
+	ArchiveTemplateBody string          `db:"archive_template_body" json:"-"`
+	AltBody             null.String     `db:"altbody" json:"altbody"`
+	Tags                pq.StringArray  `db:"tags" json:"tags"`
+	Headers             Headers         `db:"headers" json:"headers"`
+	ArchiveMeta         json.RawMessage `db:"archive_meta" json:"archive_meta"`
 
 	// List of media (attachment) IDs obtained from the next-campaign query
 	// while sending a campaign.
@@ -268,17 +266,20 @@ type Campaign struct {
 	// Fetched bodies of the attachments.
 	Attachments []Attachment `json:"-" db:"-"`
 
+	CampaignMeta
+
+	TemplateID        int `db:"template_id" json:"template_id"`
+	ArchiveTemplateID int `db:"archive_template_id" json:"archive_template_id"`
+
 	// Pseudofield for getting the total number of subscribers
 	// in searches and queries.
-	Total int `db:"total" json:"-"`
+	Total   int  `db:"total" json:"-"`
+	Archive bool `db:"archive" json:"archive"`
 }
 
 // CampaignMeta contains fields tracking a campaign's progress.
 type CampaignMeta struct {
-	CampaignID int `db:"campaign_id" json:"-"`
-	Views      int `db:"views" json:"views"`
-	Clicks     int `db:"clicks" json:"clicks"`
-	Bounces    int `db:"bounces" json:"bounces"`
+	StartedAt null.Time `db:"started_at" json:"started_at"`
 
 	// This is a list of {list_id, name} pairs unlike Subscriber.Lists[]
 	// because lists can be deleted after a campaign is finished, resulting
@@ -288,26 +289,30 @@ type CampaignMeta struct {
 	Lists types.JSONText `db:"lists" json:"lists"`
 	Media types.JSONText `db:"media" json:"media"`
 
-	StartedAt null.Time `db:"started_at" json:"started_at"`
-	ToSend    int       `db:"to_send" json:"to_send"`
-	Sent      int       `db:"sent" json:"sent"`
+	CampaignID int `db:"campaign_id" json:"-"`
+	Views      int `db:"views" json:"views"`
+	Clicks     int `db:"clicks" json:"clicks"`
+	Bounces    int `db:"bounces" json:"bounces"`
+
+	ToSend int `db:"to_send" json:"to_send"`
+	Sent   int `db:"sent" json:"sent"`
 }
 
 type CampaignStats struct {
-	ID        int       `db:"id" json:"id"`
-	Status    string    `db:"status" json:"status"`
-	ToSend    int       `db:"to_send" json:"to_send"`
-	Sent      int       `db:"sent" json:"sent"`
 	Started   null.Time `db:"started_at" json:"started_at"`
 	UpdatedAt null.Time `db:"updated_at" json:"updated_at"`
+	Status    string    `db:"status" json:"status"`
+	ID        int       `db:"id" json:"id"`
+	ToSend    int       `db:"to_send" json:"to_send"`
+	Sent      int       `db:"sent" json:"sent"`
 	Rate      int       `json:"rate"`
 	NetRate   int       `json:"net_rate"`
 }
 
 type CampaignAnalyticsCount struct {
+	Timestamp  time.Time `db:"timestamp" json:"timestamp"`
 	CampaignID int       `db:"campaign_id" json:"campaign_id"`
 	Count      int       `db:"count" json:"count"`
-	Timestamp  time.Time `db:"timestamp" json:"timestamp"`
 }
 
 type CampaignAnalyticsLink struct {
@@ -320,6 +325,10 @@ type Campaigns []Campaign
 
 // Template represents a reusable e-mail template.
 type Template struct {
+
+	// Only relevant to tx (transactional) templates.
+	SubjectTpl *txttpl.Template   `json:"-"`
+	Tpl        *template.Template `json:"-"`
 	Base
 
 	Name string `db:"name" json:"name"`
@@ -328,27 +337,25 @@ type Template struct {
 	Type      string `db:"type" json:"type"`
 	Body      string `db:"body" json:"body,omitempty"`
 	IsDefault bool   `db:"is_default" json:"is_default"`
-
-	// Only relevant to tx (transactional) templates.
-	SubjectTpl *txttpl.Template   `json:"-"`
-	Tpl        *template.Template `json:"-"`
 }
 
 // Bounce represents a single bounce event.
 type Bounce struct {
-	ID        int             `db:"id" json:"id"`
-	Type      string          `db:"type" json:"type"`
-	Source    string          `db:"source" json:"source"`
-	Meta      json.RawMessage `db:"meta" json:"meta"`
-	CreatedAt time.Time       `db:"created_at" json:"created_at"`
+	CreatedAt time.Time `db:"created_at" json:"created_at"`
+
+	Campaign *json.RawMessage `db:"campaign" json:"campaign"`
+
+	Type   string `db:"type" json:"type"`
+	Source string `db:"source" json:"source"`
 
 	// One of these should be provided.
 	Email          string `db:"email" json:"email,omitempty"`
 	SubscriberUUID string `db:"subscriber_uuid" json:"subscriber_uuid,omitempty"`
 	SubscriberID   int    `db:"subscriber_id" json:"subscriber_id,omitempty"`
 
-	CampaignUUID string           `db:"campaign_uuid" json:"campaign_uuid,omitempty"`
-	Campaign     *json.RawMessage `db:"campaign" json:"campaign"`
+	CampaignUUID string          `db:"campaign_uuid" json:"campaign_uuid,omitempty"`
+	Meta         json.RawMessage `db:"meta" json:"meta"`
+	ID           int             `db:"id" json:"id"`
 
 	// Pseudofield for getting the total number of bounces
 	// in searches and queries.
@@ -357,22 +364,24 @@ type Bounce struct {
 
 // Message is the message pushed to a Messenger.
 type Message struct {
-	From        string
-	To          []string
-	Subject     string
-	ContentType string
-	Body        []byte
-	AltBody     []byte
-	Headers     textproto.MIMEHeader
-	Attachments []Attachment
-
-	Subscriber Subscriber
+	Headers textproto.MIMEHeader
 
 	// Campaign is generally the same instance for a large number of subscribers.
 	Campaign *Campaign
 
+	From        string
+	Subject     string
+	ContentType string
+
 	// Messenger is the messenger backend to use: email|postback.
 	Messenger string
+
+	Subscriber Subscriber
+
+	To          []string
+	Body        []byte
+	AltBody     []byte
+	Attachments []Attachment
 }
 
 // Attachment represents a file or blob attachment that can be
@@ -385,27 +394,30 @@ type Attachment struct {
 
 // TxMessage represents an e-mail campaign.
 type TxMessage struct {
-	SubscriberEmails []string `json:"subscriber_emails"`
-	SubscriberIDs    []int    `json:"subscriber_ids"`
+	Data       map[string]interface{} `json:"data"`
+	Tpl        *template.Template     `json:"-"`
+	SubjectTpl *txttpl.Template       `json:"-"`
 
 	// Deprecated.
 	SubscriberEmail string `json:"subscriber_email"`
 	SubscriberID    int    `json:"subscriber_id"`
 
-	TemplateID  int                    `json:"template_id"`
-	Data        map[string]interface{} `json:"data"`
-	FromEmail   string                 `json:"from_email"`
-	Headers     Headers                `json:"headers"`
-	ContentType string                 `json:"content_type"`
-	Messenger   string                 `json:"messenger"`
+	FromEmail   string `json:"from_email"`
+	ContentType string `json:"content_type"`
+	Messenger   string `json:"messenger"`
+
+	Subject          string   `json:"-"`
+	SubscriberEmails []string `json:"subscriber_emails"`
+	SubscriberIDs    []int    `json:"subscriber_ids"`
+
+	Headers Headers `json:"headers"`
 
 	// File attachments added from multi-part form data.
 	Attachments []Attachment `json:"-"`
 
-	Subject    string             `json:"-"`
-	Body       []byte             `json:"-"`
-	Tpl        *template.Template `json:"-"`
-	SubjectTpl *txttpl.Template   `json:"-"`
+	Body []byte `json:"-"`
+
+	TemplateID int `json:"template_id"`
 }
 
 // markdown is a global instance of Markdown parser and renderer.
@@ -640,9 +652,9 @@ func (t *Template) Compile(f template.FuncMap) error {
 
 func (m *TxMessage) Render(sub Subscriber, tpl *Template) error {
 	data := struct {
-		Subscriber Subscriber
 		Tx         *TxMessage
-	}{sub, m}
+		Subscriber Subscriber
+	}{m, sub}
 
 	// Render the body.
 	b := bytes.Buffer{}
