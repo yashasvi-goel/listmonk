@@ -20,8 +20,8 @@ type POP struct {
 }
 
 type bounceHeaders struct {
-	Regexp *regexp.Regexp
 	Header string
+	Regexp *regexp.Regexp
 }
 
 var (
